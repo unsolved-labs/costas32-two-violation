@@ -1,0 +1,24 @@
+name: Verify released Costas construction
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify displacement multiplicities
+        run: python verify.py
+      - name: Verify independently by lag rows
+        run: python verify_lags.py
+      - name: Validate machine-readable claim
+        run: python -m json.tool result.json >/dev/null
